@@ -13,6 +13,23 @@ class UserController {
     }
   }
 
+  // Login a user
+  async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const user = await userService.validateUserPassword(email, password);
+
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      // In a real app, you would generate a token (e.g., JWT) here
+      res.json({ message: 'Login successful', user: { id: user.id, email: user.email } });
+    } catch (error) {
+      res.status(500).send('Server error');
+    }
+  }
+
   // Get a user by ID
   async getUserById(req: Request, res: Response) {
     try {
