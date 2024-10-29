@@ -36,6 +36,10 @@ class UserService {
     return null;
   }
 
+  resetUserPassword(email: any) {
+    //send email
+  }
+
   // Get all users
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find();

@@ -9,6 +9,8 @@ userRoutes.post('/', userController.register);
 // Login route
 userRoutes.post('/login', userController.login);
 
+userRoutes.post('/reset', userController.reset);
+
 // Get a user by ID
 userRoutes.get('/:id', userController.getUserById);
 

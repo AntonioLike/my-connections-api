@@ -30,6 +30,18 @@ class UserController {
     }
   }
 
+  async reset(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      await userService.resetUserPassword(email);
+
+      // In a real app, you would generate a token (e.g., JWT) here
+      res.json({ message: 'Reset successful, check your email' });
+    } catch (error) {
+      res.status(500).send('Server error');
+    }
+  }
+
   // Get a user by ID
   async getUserById(req: Request, res: Response) {
     try {
