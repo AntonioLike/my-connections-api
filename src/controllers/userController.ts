@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import userService from '../services/userService';
 
 class UserController {
+
+  SECRET_KEY = process.env.SECRET_KEY || 'default-secret-key';
 
   // Register a new user
   async register(req: Request, res: Response) {
@@ -23,9 +26,20 @@ class UserController {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
-      // In a real app, you would generate a token (e.g., JWT) here
-      res.json({ message: 'Login successful', user: { id: user.id, email: user.email } });
+      // Generate JWT token
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        this.SECRET_KEY,
+        { expiresIn: '1h' } // Token expiration time
+      );
+
+      res.json({
+        message: 'Login successful',
+        user: { id: user.id, email: user.email },
+        token
+      });
     } catch (error) {
+      console.error('Login error:', error);
       res.status(500).send('Server error');
     }
   }
