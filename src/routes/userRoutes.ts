@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import userController from '../controllers/userController';
+import authenticateToken from '../middleware/authentication';
 
 const userRoutes = Router();
 
@@ -12,7 +13,7 @@ userRoutes.post('/login', userController.login);
 userRoutes.post('/reset', userController.reset);
 
 // Get a user by ID
-userRoutes.get('/:id', userController.getUserById);
+userRoutes.get('/:id', authenticateToken, userController.getUserById);
 
 // Get all users
 userRoutes.get('/', userController.getAllUsers);

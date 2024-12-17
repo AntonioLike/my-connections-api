@@ -1,7 +1,4 @@
-import dotenv from 'dotenv';
 import { AppDataSource } from '../data-source';
-
-dotenv.config();
 
 const connectDB = async () => {
   try {

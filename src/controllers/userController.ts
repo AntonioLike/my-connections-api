@@ -29,20 +29,22 @@ class UserController {
       // Generate JWT token
       const token = jwt.sign(
         { userId: user.id, email: user.email },
-        this.SECRET_KEY,
+        process.env.SECRET_KEY as string,
         { expiresIn: '1h' } // Token expiration time
       );
 
+      // Respond with user info and token
       res.json({
         message: 'Login successful',
         user: { id: user.id, email: user.email },
-        token
+        token,
       });
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).send('Server error');
     }
   }
+
 
   async reset(req: Request, res: Response) {
     try {

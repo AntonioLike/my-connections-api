@@ -1,6 +1,9 @@
 import express, { Application } from 'express';
 import cors from 'cors'; // Import the CORS middleware
 import userRoutes from './routes/userRoutes';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app: Application = express();
 

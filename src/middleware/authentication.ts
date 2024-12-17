@@ -1,17 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const SECRET_KEY = process.env.SECRET_KEY;
-if (!SECRET_KEY) {
-    throw new Error("SECRET_KEY is not defined in environment variables");
-}
-
 // Define an extended Request interface to include the `user` property
 interface AuthenticatedRequest extends Request {
     user?: string | JwtPayload;
 }
 
 const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const SECRET_KEY = process.env.SECRET_KEY;
+    if (!SECRET_KEY) {
+        throw new Error("SECRET_KEY is not defined in environment variables");
+    }
+
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
