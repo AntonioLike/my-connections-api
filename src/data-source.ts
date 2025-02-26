@@ -2,6 +2,10 @@
 
 import { DataSource } from 'typeorm';
 
+const entitiesPath = process.env.NODE_ENV === 'production'
+    ? 'dist/entity/**/*.js'
+    : 'src/entity/**/*.ts';
+
 export const AppDataSource = new DataSource({
     type: 'postgres',
     host: 'localhost',
@@ -11,7 +15,7 @@ export const AppDataSource = new DataSource({
     database: 'myConnections',
     synchronize: true, // Disable in production
     logging: false,
-    entities: ['src/entity/**/*.ts'],
+    entities: [entitiesPath],
     migrations: ['src/migration/**/*.ts'],
     subscribers: [],
 });

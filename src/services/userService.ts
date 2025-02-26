@@ -21,6 +21,25 @@ class UserService {
     return user || null;
   }
 
+  // Get a user by email
+  async getUserByEmail(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ email });
+    return user || null;
+  }
+
+  // Validate user credentials (for login)
+  async validateUserPassword(email: string, password: string): Promise<User | null> {
+    const user = await this.getUserByEmail(email);
+    if (user && user.password === password) {  // For production, use a password hashing mechanism
+      return user;
+    }
+    return null;
+  }
+
+  resetUserPassword(email: any) {
+    //send email
+  }
+
   // Get all users
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find();

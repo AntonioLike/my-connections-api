@@ -1,13 +1,58 @@
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import userService from '../services/userService';
 
 class UserController {
+
+  SECRET_KEY = process.env.SECRET_KEY || 'default-secret-key';
 
   // Register a new user
   async register(req: Request, res: Response) {
     try {
       const user = await userService.createUser(req.body);
       res.status(201).json(user);
+    } catch (error) {
+      res.status(500).send('Server error');
+    }
+  }
+
+  // Login a user
+  async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const user = await userService.validateUserPassword(email, password);
+
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.SECRET_KEY as string,
+        { expiresIn: '1h' } // Token expiration time
+      );
+
+      // Respond with user info and token
+      res.json({
+        message: 'Login successful',
+        user: { id: user.id, email: user.email },
+        token,
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(500).send('Server error');
+    }
+  }
+
+
+  async reset(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      await userService.resetUserPassword(email);
+
+      // In a real app, you would generate a token (e.g., JWT) here
+      res.json({ message: 'Reset successful, check your email' });
     } catch (error) {
       res.status(500).send('Server error');
     }
