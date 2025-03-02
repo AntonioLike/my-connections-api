@@ -1,6 +1,7 @@
 import { AppDataSource } from '../data-source';
 import { User } from "../entity/user";
 import { Repository } from 'typeorm';
+import crypto from 'crypto';
 
 class UserService {
   private userRepository: Repository<User>;
@@ -9,10 +10,19 @@ class UserService {
     this.userRepository = AppDataSource.getRepository(User);
   }
 
-  // Create a new user
+  private async generateUniqueUserToken(userId: number): Promise<string> {
+    const sequentialPart = userId.toString().padStart(8, '0'); // Ensure 4 digits
+    const randomPart = crypto.randomBytes(2).toString('hex').toUpperCase().substring(0, 3);
+    const token = `${sequentialPart}${randomPart}`;
+    return token;
+  }
+
   async createUser(userData: Partial<User>): Promise<User> {
     const newUser = this.userRepository.create(userData);
-    return await this.userRepository.save(newUser);
+    const savedUser = await this.userRepository.save(newUser);
+
+    savedUser.userToken = await this.generateUniqueUserToken(savedUser.id);
+    return await this.userRepository.save(savedUser);
   }
 
   // Get a user by ID
