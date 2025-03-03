@@ -11,18 +11,22 @@ class UserService {
   }
 
   private async generateUniqueUserToken(userId: number): Promise<string> {
-    const sequentialPart = userId.toString().padStart(8, '0'); // Ensure 4 digits
-    const randomPart = crypto.randomBytes(2).toString('hex').toUpperCase().substring(0, 3);
-    const token = `${sequentialPart}${randomPart}`;
+    const sequentialPart = userId.toString(36).padStart(5, '0').toUpperCase();
+    const randomPart = crypto.randomBytes(2).toString('hex').toUpperCase().substring(0, 2);
+    const token = `${randomPart}${sequentialPart}`;
     return token;
   }
 
   async createUser(userData: Partial<User>): Promise<User> {
     const newUser = this.userRepository.create(userData);
-    const savedUser = await this.userRepository.save(newUser);
+    const tempToken = 'ZZZZZZZZZZ';
+    newUser.userToken = tempToken;
+    let savedUser = await this.userRepository.save(newUser);
 
     savedUser.userToken = await this.generateUniqueUserToken(savedUser.id);
-    return await this.userRepository.save(savedUser);
+
+    savedUser = await this.userRepository.save(savedUser);
+    return savedUser;
   }
 
   // Get a user by ID
