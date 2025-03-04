@@ -1,10 +1,6 @@
-// src/data-source.ts
-
 import { DataSource } from 'typeorm';
-
-const entitiesPath = process.env.NODE_ENV === 'production'
-    ? 'dist/entity/**/*.js'
-    : 'src/entity/**/*.ts';
+import { User } from './entity/user';
+import { Link } from './entity/link';
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
@@ -15,7 +11,7 @@ export const AppDataSource = new DataSource({
     database: 'myConnections',
     synchronize: true, // Disable in production
     logging: false,
-    entities: [entitiesPath],
+    entities: [User, Link], // Import entities directly instead of using a path
     migrations: ['src/migration/**/*.ts'],
     subscribers: [],
 });
