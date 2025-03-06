@@ -35,6 +35,12 @@ class UserService {
     return user || null;
   }
 
+  // Get a user by ID
+  async getUserByUserToken(token: string): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ userToken: token });
+    return user || null;
+  }
+
   // Get a user by email
   async getUserByEmail(email: string): Promise<User | null> {
     const user = await this.userRepository.findOneBy({ email });

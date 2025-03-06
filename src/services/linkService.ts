@@ -3,7 +3,6 @@ import { AppDataSource } from '../data-source';
 import { Link } from '../entity/link';
 import { User } from '../entity/user';
 import UserService from './userService';
-import userService from './userService';
 
 class LinkService {
     private linkRepository: Repository<Link>;
@@ -13,7 +12,7 @@ class LinkService {
 
     // Get the logged-in user's userToken
     async getUserToken(userId: number): Promise<string | null> {
-        const user = await userService.getUserById(userId);
+        const user = await UserService.getUserById(userId);
         return user ? user.userToken : null;
     }
 
@@ -23,8 +22,8 @@ class LinkService {
             throw new Error("You cannot link with yourself.");
         }
 
-        const user1 = await this.userService.getUserById(userId);
-        const user2 = await this.userRepository.findOneBy({ userToken: targetToken });
+        const user1 = await UserService.getUserByUserToken(userToken);
+        const user2 = await UserService.getUserByUserToken(targetToken);
 
         if (!user1 || !user2) {
             throw new Error("One or both users not found.");
@@ -39,47 +38,53 @@ class LinkService {
         });
 
         if (existingLink) {
+            // If the second user is completing the link, update status to "linked"
+            if (existingLink.status === "pending") {
+                existingLink.status = "linked";
+                await this.linkRepository.save(existingLink);
+                return "Link confirmed.";
+            }
             return "Link already exists.";
         }
 
+        // Create a new link request
         const newLink = this.linkRepository.create({
             user1,
             user2,
-            status: 'pending',
+            status: "pending",
         });
 
         await this.linkRepository.save(newLink);
-        return "Link request sent.";
+        return "Link request created.";
     }
 
-    // Confirm mutual linking
-    async confirmLink(userToken: string, targetToken: string): Promise<string> {
+    // Get all confirmed links for a user
+    async getLinksByUser(userToken: string): Promise<Link[]> {
+        return await this.linkRepository.find({
+            where: [
+                { user1: { userToken }, status: "linked" },
+                { user2: { userToken }, status: "linked" }
+            ],
+            relations: ["user1", "user2"] // Fetch related user info
+        });
+    }
+
+    async deleteLink(userToken: string, targetToken: string): Promise<string> {
         const link = await this.linkRepository.findOne({
             where: [
-                { user1: { userToken }, user2: { userToken: targetToken }, status: 'pending' },
-                { user1: { userToken: targetToken }, user2: { userToken }, status: 'pending' }
+                { user1: { userToken }, user2: { userToken: targetToken } },
+                { user1: { userToken: targetToken }, user2: { userToken } }
             ]
         });
 
         if (!link) {
-            throw new Error("No pending link request found.");
+            throw new Error("No link found between these users.");
         }
 
-        link.status = 'linked';
-        await this.linkRepository.save(link);
-        return "Users successfully linked.";
+        await this.linkRepository.remove(link);
+        return "Link deleted successfully.";
     }
 
-    // Check pending/confirmed links for a user
-    async getLinkStatus(userToken: string): Promise<Link[]> {
-        return await this.linkRepository.find({
-            where: [
-                { user1: { userToken } },
-                { user2: { userToken } }
-            ],
-            relations: ["user1", "user2"]
-        });
-    }
 }
 
 export default new LinkService();

@@ -7,10 +7,9 @@ const linkRoutes = Router();
 // Request a link with another user
 linkRoutes.post('/request', authenticateToken, linkController.requestLink);
 
-// Confirm a link (both users must enter each other’s codes)
-linkRoutes.post('/confirm', authenticateToken, linkController.confirmLink);
+linkRoutes.get('/:userToken', authenticateToken, linkController.getLinksByUserId);
 
-// Get link status (pending/confirmed)
-linkRoutes.get('/status', authenticateToken, linkController.getLinkStatus);
+linkRoutes.delete('/:userToken/:targetToken', authenticateToken, linkController.deleteLink);
+
 
 export default linkRoutes;
