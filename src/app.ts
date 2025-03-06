@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors'; // Import the CORS middleware
 import userRoutes from './routes/userRoutes';
 import dotenv from 'dotenv';
+import linkRoutes from './routes/linkRoutes';
 
 dotenv.config();
 
@@ -22,5 +23,6 @@ app.use(express.json());
 
 // Routes
 app.use('/user', userRoutes);
+app.use('/link', linkRoutes);
 
 export default app;
