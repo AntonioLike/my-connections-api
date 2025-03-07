@@ -7,6 +7,10 @@ interface AuthenticatedRequest extends Request {
 }
 
 const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (process.env.DISABLE_AUTH === 'TRUE') {
+        return next(); // Skip authentication in development mode
+    }
+
     const SECRET_KEY = process.env.SECRET_KEY;
     if (!SECRET_KEY) {
         throw new Error("SECRET_KEY is not defined in environment variables");

@@ -16,7 +16,6 @@ class LinkService {
         return user ? user.userToken : null;
     }
 
-    // Request a link by userToken
     async requestLink(userToken: string, targetToken: string): Promise<string> {
         if (userToken === targetToken) {
             throw new Error("You cannot link with yourself.");
@@ -29,17 +28,23 @@ class LinkService {
             throw new Error("One or both users not found.");
         }
 
-        // Check if link already exists
+        // Fetch existing link while also joining `user1` and `user2`
         const existingLink = await this.linkRepository.findOne({
             where: [
-                { user1, user2 },
-                { user1: user2, user2: user1 }
-            ]
+                { user1: { userToken }, user2: { userToken: targetToken } },
+                { user1: { userToken: targetToken }, user2: { userToken } }
+            ],
+            relations: ["user1", "user2"] // Ensure user data is loaded
         });
 
         if (existingLink) {
-            // If the second user is completing the link, update status to "linked"
             if (existingLink.status === "pending") {
+                // Ensure a **different user** initiated the second request before confirming
+                if (existingLink.user1.userToken === userToken) {
+                    return "Waiting for the other user to request the link.";
+                }
+
+                // Now, since the request is made by the second user, confirm the link
                 existingLink.status = "linked";
                 await this.linkRepository.save(existingLink);
                 return "Link confirmed.";
@@ -47,7 +52,7 @@ class LinkService {
             return "Link already exists.";
         }
 
-        // Create a new link request
+        // Create a new link request initiated by userToken
         const newLink = this.linkRepository.create({
             user1,
             user2,

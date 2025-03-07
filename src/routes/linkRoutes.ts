@@ -5,7 +5,7 @@ import linkController from '../controllers/linkController';
 const linkRoutes = Router();
 
 // Request a link with another user
-linkRoutes.post('/request', authenticateToken, linkController.requestLink);
+linkRoutes.post('/:userToken/:targetToken', authenticateToken, linkController.requestLink);
 
 linkRoutes.get('/:userToken', authenticateToken, linkController.getLinksByUserId);
 

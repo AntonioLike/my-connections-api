@@ -6,7 +6,8 @@ class LinkController {
     // Request a link with another user
     async requestLink(req: Request, res: Response) {
         try {
-            const { userToken, targetToken } = req.body;
+            const userToken = req.params.userToken;
+            const targetToken = req.params.targetToken;
             if (!userToken || !targetToken) {
                 return res.status(400).json({ message: 'Both userToken and targetToken are required' });
             }
@@ -22,7 +23,7 @@ class LinkController {
     // Get all confirmed links for the logged-in user
     async getLinksByUserId(req: Request, res: Response) {
         try {
-            const userToken = req.params.id; // Extract userToken from authenticated request
+            const userToken = req.params.userToken; // Extract userToken from authenticated request
             if (!userToken) {
                 return res.status(400).json({ message: 'User token is required' });
             }
