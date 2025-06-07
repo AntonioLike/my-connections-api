@@ -3,6 +3,8 @@ import cors from 'cors'; // Import the CORS middleware
 import userRoutes from './routes/userRoutes';
 import dotenv from 'dotenv';
 import linkRoutes from './routes/linkRoutes';
+import cardRoutes from './routes/cardRoutes';
+import path from 'path';
 
 dotenv.config();
 
@@ -21,8 +23,12 @@ app.use(cors(corsOptions));
 // Middleware
 app.use(express.json());
 
+// Static
+app.use('/cards', express.static(path.join(__dirname, '..', 'resources/cards')));
+
 // Routes
 app.use('/user', userRoutes);
 app.use('/link', linkRoutes);
+app.use('/card', cardRoutes);
 
 export default app;

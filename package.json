@@ -8,7 +8,8 @@
     "start": "ts-node src/server.ts",
     "build": "tsc",
     "dev": "ts-node-dev src/server.ts",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "seed:cards": "ts-node src/seed/seedCards.ts"
   },
   "keywords": [],
   "author": "",
