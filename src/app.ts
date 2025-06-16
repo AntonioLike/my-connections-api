@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import linkRoutes from './routes/linkRoutes';
 import cardRoutes from './routes/cardRoutes';
 import path from 'path';
+import userCardResponseRoutes from './routes/userCardResponseRoutes';
 
 dotenv.config();
 
@@ -30,5 +31,6 @@ app.use('/cards', express.static(path.join(__dirname, '..', 'resources/cards')))
 app.use('/user', userRoutes);
 app.use('/link', linkRoutes);
 app.use('/card', cardRoutes);
+app.use('/user-card-response', userCardResponseRoutes);
 
 export default app;
