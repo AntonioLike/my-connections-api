@@ -12,6 +12,41 @@ class UserCardResponseService {
         this.responseRepository = AppDataSource.getRepository(UserCardResponse);
     }
 
+    async getAllCardsWithUserAndLinkResponses(user: User, link: Link): Promise<
+        {
+            card: Card
+            response: 'yes' | 'no' | null
+        }[]
+    > {
+        const cardRepo = AppDataSource.getRepository(Card);
+
+        const cardsWithResponses = await cardRepo
+            .createQueryBuilder("card")
+            .leftJoinAndSelect(
+                UserCardResponse,
+                "response",
+                "response.card_id = card.id AND response.user_token = :userToken AND response.link_id = :linkId",
+                { userToken: user.userToken, linkId: link.id }
+            )
+            .select([
+                "card.id AS id",
+                "card.title AS title",
+                "card.imagePath AS imagePath",
+                "response.response AS response",
+            ])
+            .getRawMany();
+
+        return cardsWithResponses.map((row) => ({
+            card: {
+                id: row.id,
+                title: row.title,
+                imagePath: row.imagePath,
+            },
+            response: row.response ?? null,
+        }));
+    }
+
+
     // Get a specific user's response to all links and cards
     async getResponseForUser(user: User): Promise<UserCardResponse | null> {
         return await this.responseRepository.findOne({

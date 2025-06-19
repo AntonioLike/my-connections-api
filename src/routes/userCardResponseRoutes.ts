@@ -3,6 +3,12 @@ import userCardResponseController from '../controllers/userCardResponseControlle
 
 const userCardResponseRoutes = Router();
 
+// Get all cards with response or null for this user and link
+userCardResponseRoutes.get(
+    '/all-cards/:userToken/:linkId',
+    userCardResponseController.getAllCardsWithUserAndLinkResponses
+);
+
 // Get a specific response by userToken, linkId, and cardId
 userCardResponseRoutes.get('/:userToken/:linkId/:cardId', userCardResponseController.getResponse);
 

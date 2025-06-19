@@ -6,6 +6,29 @@ import { Card } from '../entity/card';
 import { Link } from '../entity/link';
 
 class UserCardResponseController {
+
+    // Get all cards with the user's response (or null)
+    async getAllCardsWithUserAndLinkResponses(req: Request, res: Response) {
+        try {
+            const userToken = req.params.userToken;
+            const linkId = Number(req.params.linkId);
+
+            const user = await AppDataSource.getRepository(User).findOneBy({ userToken });
+            const link = await AppDataSource.getRepository(Link).findOneBy({ id: linkId });
+
+            if (!user || !link) {
+                return res.status(404).json({ message: 'User or link not found' });
+            }
+
+            const result = await userCardResponseService.getAllCardsWithUserAndLinkResponses(user, link);
+            res.json(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Server error');
+        }
+    }
+
+
     // Get a specific response (by userToken, linkId, and cardId)
     async getResponse(req: Request, res: Response) {
         try {
