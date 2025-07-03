@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 
+//TODO: remove id and use userToken
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
