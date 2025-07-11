@@ -1,11 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
-
-//TODO: remove id and use userToken
+import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryColumn({ unique: true })
+    userToken!: string;
 
     @Column()
     name!: string;
@@ -15,7 +13,4 @@ export class User {
 
     @Column()
     password!: string;
-
-    @Column({ unique: true })
-    userToken!: string;
 }

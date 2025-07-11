@@ -1,4 +1,4 @@
-import { AppDataSource } from '../data-source';
+import dataSource from '../data-source';
 import { User } from "../entity/user";
 import { Repository } from 'typeorm';
 import crypto from 'crypto';
@@ -7,32 +7,25 @@ class UserService {
   private userRepository: Repository<User>;
 
   constructor() {
-    this.userRepository = AppDataSource.getRepository(User);
+    this.userRepository = dataSource.getRepository(User);
   }
 
-  private async generateUniqueUserToken(userId: number): Promise<string> {
-    const sequentialPart = userId.toString(36).padStart(5, '0').toUpperCase();
+  private async generateUniqueUserToken(): Promise<string> {
+    const timePart = Date.now().toString(36).toUpperCase(); // base36 timestamp
     const randomPart = crypto.randomBytes(2).toString('hex').toUpperCase().substring(0, 2);
-    const token = `${randomPart}${sequentialPart}`;
+    const token = `${randomPart}${timePart}`;
     return token;
   }
 
   async createUser(userData: Partial<User>): Promise<User> {
+
+    const userToken = await this.generateUniqueUserToken();
+
+    userData.userToken = userToken;
+
     const newUser = this.userRepository.create(userData);
-    const tempToken = 'ZZZZZZZZZZ';
-    newUser.userToken = tempToken;
-    let savedUser = await this.userRepository.save(newUser);
 
-    savedUser.userToken = await this.generateUniqueUserToken(savedUser.id);
-
-    savedUser = await this.userRepository.save(savedUser);
-    return savedUser;
-  }
-
-  // Get a user by ID
-  async getUserById(id: number): Promise<User | null> {
-    const user = await this.userRepository.findOneBy({ id });
-    return user || null;
+    return newUser;
   }
 
   // Get a user by ID
@@ -65,9 +58,9 @@ class UserService {
     return await this.userRepository.find();
   }
 
-  // Update a user by ID
-  async updateUser(id: number, updatedData: Partial<User>): Promise<User | null> {
-    const user = await this.userRepository.findOneBy({ id });
+  // Update a user by Token
+  async updateUser(userToken: string, updatedData: Partial<User>): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ userToken });
     if (!user) {
       return null;
     }

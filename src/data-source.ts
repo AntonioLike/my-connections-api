@@ -4,7 +4,7 @@ import { Link } from './entity/link';
 import { Card } from './entity/card';
 import { UserCardResponse } from './entity/userCardResponse';
 
-export const AppDataSource = new DataSource({
+export default new DataSource({
     type: 'postgres',
     host: 'localhost',
     port: 5432,

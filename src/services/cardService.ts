@@ -1,4 +1,4 @@
-import { AppDataSource } from '../data-source';
+import dataSource from '../data-source';
 import { Card } from '../entity/card';
 import { Repository } from 'typeorm';
 
@@ -6,7 +6,7 @@ class CardService {
     private cardRepository: Repository<Card>;
 
     constructor() {
-        this.cardRepository = AppDataSource.getRepository(Card);
+        this.cardRepository = dataSource.getRepository(Card);
     }
 
     // Get a card by ID

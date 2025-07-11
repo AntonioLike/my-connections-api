@@ -20,3 +20,7 @@ This is a template project for a Node.js backend using Express, TypeScript, and 
 
 - `PORT`: The port on which the server runs
 - MongoDB connection string can be configured in `src/database/connection.ts`
+
+## Migrations
+
+- npx ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/migration/refactorEntities -d ./src/data-source.ts

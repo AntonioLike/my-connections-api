@@ -1,17 +1,10 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    ManyToOne,
-    Column,
-    Unique,
-    JoinColumn,
-} from 'typeorm';
+import { Entity, ManyToOne, Column, Unique, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user';
 import { Card } from './card';
 import { Link } from './link';
 
 @Entity()
-@Unique(['user', 'link', 'card']) // Prevents duplicate responses per user per card per link
+@Unique(['user', 'link', 'card'])
 export class UserCardResponse {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -28,6 +21,6 @@ export class UserCardResponse {
     @JoinColumn({ name: 'card_id' })
     card!: Card;
 
-    @Column({ type: 'enum', enum: ['yes', 'no'] })
-    response!: 'yes' | 'no';
+    @Column({ type: 'enum', enum: ['yes', 'no'], nullable: true })
+    response!: 'yes' | 'no' | null;
 }

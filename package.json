@@ -9,6 +9,7 @@
     "build": "tsc",
     "dev": "ts-node-dev src/server.ts",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:generate": "npm run typeorm -- migration:generate",
     "seed:cards": "ts-node src/seed/seedCards.ts"
   },
   "keywords": [],

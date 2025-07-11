@@ -1,5 +1,5 @@
 export type UserCardResponseDTO = {
-    userId: number;
+    userToken: string;
     linkId: number;
     cardId: number;
     response: 'yes' | 'no' | null;

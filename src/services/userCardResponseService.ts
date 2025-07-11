@@ -1,4 +1,4 @@
-import { AppDataSource } from '../data-source';
+import dataSource from '../data-source';
 import { Repository } from 'typeorm';
 import { UserCardResponse } from '../entity/userCardResponse';
 import { User } from '../entity/user';
@@ -9,17 +9,21 @@ import { UserCardResponseDTO } from '../dto/userCardResponse.dto';
 
 class UserCardResponseService {
     private responseRepository: Repository<UserCardResponse>;
+    private cardRepository: Repository<Card>;
 
     constructor() {
-        this.responseRepository = AppDataSource.getRepository(UserCardResponse);
+        this.responseRepository = dataSource.getRepository(UserCardResponse);
+        this.cardRepository = dataSource.getRepository(Card);
     }
 
+    /**
+     * Get all cards with responses for a given user and link.
+     */
     async getAllCardsWithUserAndLinkResponses(
         user: User,
         link: Link
     ): Promise<UserCardResponseDTO[]> {
-        const cardRepo = AppDataSource.getRepository(Card);
-        const cards = await cardRepo.find();
+        const cards = await this.cardRepository.find();
 
         const responses = await this.responseRepository.find({
             where: {
@@ -30,17 +34,15 @@ class UserCardResponseService {
         });
 
         const responseMap = new Map<number, UserCardResponse>();
-        for (const res of responses) {
-            responseMap.set(res.card.id, res);
-        }
+        responses.forEach(res => responseMap.set(res.card.id, res));
 
-        return cards.map((card) => {
+        return cards.map(card => {
             const existing = responseMap.get(card.id);
             if (existing) {
                 return toUserCardResponseDTO(existing);
             } else {
                 return {
-                    userId: user.id,
+                    userToken: user.userToken,
                     linkId: link.id,
                     cardId: card.id,
                     response: null,
@@ -49,17 +51,27 @@ class UserCardResponseService {
         });
     }
 
+    /**
+     * Get a single response for a specific user, link, and card.
+     */
     async getResponse(
         user: User,
         link: Link,
         card: Card
     ): Promise<UserCardResponse | null> {
         return await this.responseRepository.findOne({
-            where: { user, link, card },
+            where: {
+                user: { userToken: user.userToken },
+                link: { id: link.id },
+                card: { id: card.id },
+            },
             relations: ['user', 'link', 'card'],
         });
     }
 
+    /**
+     * Create or update a response.
+     */
     async upsertResponse(
         user: User,
         link: Link,
