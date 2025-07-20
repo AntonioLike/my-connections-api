@@ -1,8 +1,8 @@
-import { AppDataSource } from '../data-source';
+import datasource from '../data-source';
 
 const connectDB = async () => {
   try {
-    await AppDataSource.initialize();
+    await datasource.initialize();
     console.log('PostgreSQL connected with TypeORM');
   } catch (error) {
     console.error('PostgreSQL connection error with TypeORM:', error);

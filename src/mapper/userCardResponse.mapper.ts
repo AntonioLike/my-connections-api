@@ -5,7 +5,7 @@ export function toUserCardResponseDTO(
     entity: UserCardResponse
 ): UserCardResponseDTO {
     return {
-        userId: entity.user.id,
+        userToken: entity.user.userToken,
         linkId: entity.link.id,
         cardId: entity.card.id,
         response: entity.response ?? null,

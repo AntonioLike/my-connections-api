@@ -28,7 +28,7 @@ class UserController {
 
       // Generate JWT token
       const token = jwt.sign(
-        { userId: user.id, email: user.email },
+        { userToken: user.userToken, email: user.email },
         process.env.SECRET_KEY as string,
         { expiresIn: '1h' } // Token expiration time
       );
@@ -36,7 +36,7 @@ class UserController {
       // Respond with user info and token
       res.json({
         message: 'Login successful',
-        user: { id: user.id, email: user.email },
+        user: { id: user.userToken, email: user.email },
         token,
       });
     } catch (error) {
@@ -61,7 +61,7 @@ class UserController {
   // Get a user by ID
   async getUserById(req: Request, res: Response) {
     try {
-      const user = await userService.getUserById(Number(req.params.id));
+      const user = await userService.getUserByUserToken(req.params.userToken);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -84,7 +84,7 @@ class UserController {
   // Update a user by ID
   async updateUser(req: Request, res: Response) {
     try {
-      const updatedUser = await userService.updateUser(Number(req.params.id), req.body);
+      const updatedUser = await userService.updateUser(req.params.userToken, req.body);
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
       }

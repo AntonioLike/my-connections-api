@@ -30,7 +30,7 @@ class UserCardResponseService {
                 user: { userToken: user.userToken },
                 link: { id: link.id },
             },
-            relations: ['card'],
+            relations: ['card', 'user', 'link'],
         });
 
         const responseMap = new Map<number, UserCardResponse>();

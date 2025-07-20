@@ -5,11 +5,11 @@ const userCardResponseRoutes = Router();
 
 // Get all cards with response or null for this user and link
 userCardResponseRoutes.get(
-    '/all-cards/:userToken/:linkId',
+    '/:userToken/:linkId',
     userCardResponseController.getAllCardsWithUserAndLinkResponses
 );
 
 // Create or update a response
-userCardResponseRoutes.post('/', userCardResponseController.setResponse);
+userCardResponseRoutes.post('/', userCardResponseController.upsertResponse);
 
 export default userCardResponseRoutes;

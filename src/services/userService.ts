@@ -23,7 +23,9 @@ class UserService {
 
     userData.userToken = userToken;
 
-    const newUser = this.userRepository.create(userData);
+    let newUser = this.userRepository.create(userData);
+
+    newUser = await this.userRepository.save(newUser);
 
     return newUser;
   }
