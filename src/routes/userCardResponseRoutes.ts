@@ -1,15 +1,16 @@
 import { Router } from 'express';
 import userCardResponseController from '../controllers/userCardResponseController';
+import authenticateToken from '../middleware/authentication';
 
 const userCardResponseRoutes = Router();
 
 // Get all cards with response or null for this user and link
 userCardResponseRoutes.get(
-    '/:userToken/:linkId',
+    '/:userToken/:linkId', authenticateToken,
     userCardResponseController.getAllCardsWithUserAndLinkResponses
 );
 
 // Create or update a response
-userCardResponseRoutes.post('/', userCardResponseController.upsertResponse);
+userCardResponseRoutes.post('/', authenticateToken, userCardResponseController.upsertResponse);
 
 export default userCardResponseRoutes;

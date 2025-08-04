@@ -4,6 +4,7 @@ import userRoutes from './routes/userRoutes';
 import dotenv from 'dotenv';
 import linkRoutes from './routes/linkRoutes';
 import cardRoutes from './routes/cardRoutes';
+import authRoutes from './routes/authRoutes';
 import path from 'path';
 import userCardResponseRoutes from './routes/userCardResponseRoutes';
 
@@ -32,5 +33,6 @@ app.use('/user', userRoutes);
 app.use('/link', linkRoutes);
 app.use('/card', cardRoutes);
 app.use('/user-card-response', userCardResponseRoutes);
+app.use('/auth', authRoutes);
 
 export default app;
