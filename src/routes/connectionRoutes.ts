@@ -7,7 +7,7 @@ const connectionRoutes = Router();
 // Request a connection with another user
 connectionRoutes.post('/:userToken/:targetToken', authenticateToken, connectionController.requestConnection);
 
-connectionRoutes.get('/:userToken', authenticateToken, connectionController.getLinksByUserId);
+connectionRoutes.get('/', authenticateToken, connectionController.getUserConnections);
 
 connectionRoutes.delete('/:userToken/:targetToken', authenticateToken, connectionController.deleteLink);
 

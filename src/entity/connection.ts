@@ -15,6 +15,6 @@ export class Connection {
     @JoinColumn({ name: 'user2_token', referencedColumnName: 'userToken' })
     user2!: User;
 
-    @Column({ type: 'enum', enum: ['pending', 'linked'], default: 'pending' })
-    status!: 'pending' | 'linked';
+    @Column({ type: 'enum', enum: ['pending', 'connected'], default: 'pending' })
+    status!: 'pending' | 'connected';
 }

@@ -12,15 +12,15 @@ class ConnectionService {
     }
 
     /**
-     * Always returns users ordered by userToken to enforce consistent link creation.
+     * Always returns users ordered by userToken to enforce consistent connection creation.
      */
     private getCanonicalUsers(userA: User, userB: User): [User, User] {
         return userA.userToken < userB.userToken ? [userA, userB] : [userB, userA];
     }
 
-    async requestLink(userToken: string, targetToken: string): Promise<string> {
+    async requestConnection(userToken: string, targetToken: string): Promise<string> {
         if (userToken === targetToken) {
-            throw new Error("You cannot link with yourself.");
+            throw new Error("You cannot connect with yourself.");
         }
 
         const userA = await UserService.getUserByUserToken(userToken);
@@ -32,39 +32,39 @@ class ConnectionService {
 
         const [user1, user2] = this.getCanonicalUsers(userA, userB);
 
-        let link = await this.connectionRepository.findOne({
+        let connection = await this.connectionRepository.findOne({
             where: { user1: { userToken: user1.userToken }, user2: { userToken: user2.userToken } },
             relations: ["user1", "user2"]
         });
 
-        if (link) {
-            if (link.status === "pending") {
-                if (userToken === link.user1.userToken) {
-                    return "Waiting for the other user to request the link.";
+        if (connection) {
+            if (connection.status === "pending") {
+                if (userToken === connection.user1.userToken) {
+                    return "Waiting for the other user to request the connection.";
                 }
-                link.status = "linked";
-                await this.connectionRepository.save(link);
+                connection.status = "connected";
+                await this.connectionRepository.save(connection);
                 return "Link confirmed.";
             }
             return "Link already exists.";
         }
 
-        // Create a new link request initiated by userToken
-        link = this.connectionRepository.create({
+        // Create a new connection request initiated by userToken
+        connection = this.connectionRepository.create({
             user1,
             user2,
             status: "pending",
         });
 
-        await this.connectionRepository.save(link);
+        await this.connectionRepository.save(connection);
         return "Link request created.";
     }
 
     async getConnectionsByUser(userToken: string): Promise<Connection[]> {
         return await this.connectionRepository.find({
             where: [
-                { user1: { userToken }, status: "linked" },
-                { user2: { userToken }, status: "linked" }
+                { user1: { userToken }, status: "connected" },
+                { user2: { userToken }, status: "connected" }
             ],
             relations: ["user1", "user2"]
         });
@@ -80,15 +80,15 @@ class ConnectionService {
 
         const [user1, user2] = this.getCanonicalUsers(userA, userB);
 
-        const link = await this.connectionRepository.findOne({
+        const connection = await this.connectionRepository.findOne({
             where: { user1: { userToken: user1.userToken }, user2: { userToken: user2.userToken } }
         });
 
-        if (!link) {
-            throw new Error("No link found between these users.");
+        if (!connection) {
+            throw new Error("No connection found between these users.");
         }
 
-        await this.connectionRepository.remove(link);
+        await this.connectionRepository.remove(connection);
         return "Link deleted successfully.";
     }
 }

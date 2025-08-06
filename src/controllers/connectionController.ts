@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import connectionService from '../services/connectionService';
+import { AuthenticatedRequest } from "../middleware/authentication"
 
 class ConnectionController {
 
@@ -12,7 +13,7 @@ class ConnectionController {
                 return res.status(400).json({ message: 'Both userToken and targetToken are required' });
             }
 
-            const result = await connectionService.requestLink(userToken, targetToken);
+            const result = await connectionService.requestConnection(userToken, targetToken);
             res.json({ message: result });
         } catch (error) {
             console.error('Error requesting connection:', error);
@@ -21,18 +22,21 @@ class ConnectionController {
     }
 
     // Get all confirmed connections for the logged-in user
-    async getLinksByUserId(req: Request, res: Response) {
+    async getUserConnections(req: AuthenticatedRequest, res: Response) {
         try {
-            const userToken = req.params.userToken; // Extract userToken from authenticated request
-            if (!userToken) {
-                return res.status(400).json({ message: 'User token is required' });
+            const userPayload = req.user;
+
+            if (!userPayload || typeof userPayload !== "object" || !("userToken" in userPayload)) {
+                return res.status(401).json({ message: "Invalid user session" });
             }
+
+            const userToken = userPayload.userToken;
 
             const confirmedConnections = await connectionService.getConnectionsByUser(userToken);
             res.json({ connections: confirmedConnections });
         } catch (error) {
-            console.error('Error fetching confirmed connections:', error);
-            res.status(500).send('Server error');
+            console.error("Error fetching confirmed connections:", error);
+            res.status(500).send("Server error");
         }
     }
 
