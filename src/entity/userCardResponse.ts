@@ -1,10 +1,10 @@
 import { Entity, ManyToOne, Column, Unique, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user';
 import { Card } from './card';
-import { Link } from './link';
+import { Connection } from './connection';
 
 @Entity()
-@Unique(['user', 'link', 'card'])
+@Unique(['user', 'connection', 'card'])
 export class UserCardResponse {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -13,9 +13,9 @@ export class UserCardResponse {
     @JoinColumn({ name: 'user_token', referencedColumnName: 'userToken' })
     user!: User;
 
-    @ManyToOne(() => Link)
-    @JoinColumn({ name: 'link_id' })
-    link!: Link;
+    @ManyToOne(() => Connection)
+    @JoinColumn({ name: 'connection_id' })
+    connection!: Connection;
 
     @ManyToOne(() => Card)
     @JoinColumn({ name: 'card_id' })

@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { User } from './entity/user';
-import { Link } from './entity/link';
+import { Connection } from './entity/connection';
 import { Card } from './entity/card';
 import { UserCardResponse } from './entity/userCardResponse';
 
@@ -13,7 +13,7 @@ export default new DataSource({
     database: 'myConnections',
     synchronize: true, // Disable in production
     logging: false,
-    entities: [User, Link, Card, UserCardResponse], // Import entities directly instead of using a path
+    entities: [User, Connection, Card, UserCardResponse], // Import entities directly instead of using a path
     migrations: ['src/migration/**/*.ts'],
     subscribers: [],
 });

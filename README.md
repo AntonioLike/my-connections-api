@@ -23,4 +23,6 @@ This is a template project for a Node.js backend using Express, TypeScript, and 
 
 ## Migrations
 
-- npx ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/migration/refactorEntities -d ./src/data-source.ts
+- dev uses sync:true in datasource
+
+- npx ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/migration/`Name Migration` -d ./src/data-source.ts

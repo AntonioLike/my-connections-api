@@ -1,6 +1,6 @@
 export type UserCardResponseDTO = {
     userToken: string;
-    linkId: number;
+    connectionId: number;
     cardId: number;
     response: 'yes' | 'no' | null;
 };

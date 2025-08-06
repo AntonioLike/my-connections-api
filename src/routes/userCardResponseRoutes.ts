@@ -4,9 +4,9 @@ import authenticateToken from '../middleware/authentication';
 
 const userCardResponseRoutes = Router();
 
-// Get all cards with response or null for this user and link
+// Get all cards with response or null for this user and connection
 userCardResponseRoutes.get(
-    '/:userToken/:linkId', authenticateToken,
+    '/:userToken/:connectionId', authenticateToken,
     userCardResponseController.getAllCardsWithUserAndLinkResponses
 );
 

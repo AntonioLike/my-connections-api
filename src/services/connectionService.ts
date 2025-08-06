@@ -1,14 +1,14 @@
 import { Repository } from 'typeorm';
 import dataSource from '../data-source';
-import { Link } from '../entity/link';
+import { Connection } from '../entity/connection';
 import { User } from '../entity/user';
 import UserService from './userService';
 
-class LinkService {
-    private linkRepository: Repository<Link>;
+class ConnectionService {
+    private connectionRepository: Repository<Connection>;
 
     constructor() {
-        this.linkRepository = dataSource.getRepository(Link);
+        this.connectionRepository = dataSource.getRepository(Connection);
     }
 
     /**
@@ -32,7 +32,7 @@ class LinkService {
 
         const [user1, user2] = this.getCanonicalUsers(userA, userB);
 
-        let link = await this.linkRepository.findOne({
+        let link = await this.connectionRepository.findOne({
             where: { user1: { userToken: user1.userToken }, user2: { userToken: user2.userToken } },
             relations: ["user1", "user2"]
         });
@@ -43,25 +43,25 @@ class LinkService {
                     return "Waiting for the other user to request the link.";
                 }
                 link.status = "linked";
-                await this.linkRepository.save(link);
+                await this.connectionRepository.save(link);
                 return "Link confirmed.";
             }
             return "Link already exists.";
         }
 
         // Create a new link request initiated by userToken
-        link = this.linkRepository.create({
+        link = this.connectionRepository.create({
             user1,
             user2,
             status: "pending",
         });
 
-        await this.linkRepository.save(link);
+        await this.connectionRepository.save(link);
         return "Link request created.";
     }
 
-    async getLinksByUser(userToken: string): Promise<Link[]> {
-        return await this.linkRepository.find({
+    async getConnectionsByUser(userToken: string): Promise<Connection[]> {
+        return await this.connectionRepository.find({
             where: [
                 { user1: { userToken }, status: "linked" },
                 { user2: { userToken }, status: "linked" }
@@ -80,7 +80,7 @@ class LinkService {
 
         const [user1, user2] = this.getCanonicalUsers(userA, userB);
 
-        const link = await this.linkRepository.findOne({
+        const link = await this.connectionRepository.findOne({
             where: { user1: { userToken: user1.userToken }, user2: { userToken: user2.userToken } }
         });
 
@@ -88,9 +88,9 @@ class LinkService {
             throw new Error("No link found between these users.");
         }
 
-        await this.linkRepository.remove(link);
+        await this.connectionRepository.remove(link);
         return "Link deleted successfully.";
     }
 }
 
-export default new LinkService();
+export default new ConnectionService();

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import linkService from '../services/linkService';
+import connectionService from '../services/connectionService';
 
-class LinkController {
+class ConnectionController {
 
-    // Request a link with another user
-    async requestLink(req: Request, res: Response) {
+    // Request a connection with another user
+    async requestConnection(req: Request, res: Response) {
         try {
             const userToken = req.params.userToken;
             const targetToken = req.params.targetToken;
@@ -12,15 +12,15 @@ class LinkController {
                 return res.status(400).json({ message: 'Both userToken and targetToken are required' });
             }
 
-            const result = await linkService.requestLink(userToken, targetToken);
+            const result = await connectionService.requestLink(userToken, targetToken);
             res.json({ message: result });
         } catch (error) {
-            console.error('Error requesting link:', error);
+            console.error('Error requesting connection:', error);
             res.status(500).send('Server error');
         }
     }
 
-    // Get all confirmed links for the logged-in user
+    // Get all confirmed connections for the logged-in user
     async getLinksByUserId(req: Request, res: Response) {
         try {
             const userToken = req.params.userToken; // Extract userToken from authenticated request
@@ -28,10 +28,10 @@ class LinkController {
                 return res.status(400).json({ message: 'User token is required' });
             }
 
-            const confirmedLinks = await linkService.getLinksByUser(userToken);
-            res.json({ links: confirmedLinks });
+            const confirmedConnections = await connectionService.getConnectionsByUser(userToken);
+            res.json({ connections: confirmedConnections });
         } catch (error) {
-            console.error('Error fetching confirmed links:', error);
+            console.error('Error fetching confirmed connections:', error);
             res.status(500).send('Server error');
         }
     }
@@ -44,13 +44,13 @@ class LinkController {
                 return res.status(400).json({ message: 'Both userToken and targetToken are required' });
             }
 
-            const message = await linkService.deleteLink(userToken, targetToken);
+            const message = await connectionService.deleteLink(userToken, targetToken);
             res.json({ message });
         } catch (error) {
-            console.error('Error deleting link:', error);
+            console.error('Error deleting connection:', error);
             res.status(500).json({ error: error });
         }
     }
 }
 
-export default new LinkController();
+export default new ConnectionController();

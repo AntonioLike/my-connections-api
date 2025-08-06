@@ -3,7 +3,7 @@ import { User } from './user';
 
 @Entity()
 @Unique(['user1', 'user2']) // Enforce uniqueness at DB level
-export class Link {
+export class Connection {
     @PrimaryGeneratedColumn()
     id!: number;
 

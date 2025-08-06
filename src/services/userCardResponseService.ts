@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { UserCardResponse } from '../entity/userCardResponse';
 import { User } from '../entity/user';
 import { Card } from '../entity/card';
-import { Link } from '../entity/link';
+import { Connection } from '../entity/connection';
 import { toUserCardResponseDTO } from '../mapper/userCardResponse.mapper';
 import { UserCardResponseDTO } from '../dto/userCardResponse.dto';
 
@@ -17,20 +17,20 @@ class UserCardResponseService {
     }
 
     /**
-     * Get all cards with responses for a given user and link.
+     * Get all cards with responses for a given user and connection.
      */
     async getAllCardsWithUserAndLinkResponses(
         user: User,
-        link: Link
+        connection: Connection
     ): Promise<UserCardResponseDTO[]> {
         const cards = await this.cardRepository.find();
 
         const responses = await this.responseRepository.find({
             where: {
                 user: { userToken: user.userToken },
-                link: { id: link.id },
+                connection: { id: connection.id },
             },
-            relations: ['card', 'user', 'link'],
+            relations: ['card', 'user', 'connection'],
         });
 
         const responseMap = new Map<number, UserCardResponse>();
@@ -43,7 +43,7 @@ class UserCardResponseService {
             } else {
                 return {
                     userToken: user.userToken,
-                    linkId: link.id,
+                    connectionId: connection.id,
                     cardId: card.id,
                     response: null,
                 };
@@ -52,20 +52,20 @@ class UserCardResponseService {
     }
 
     /**
-     * Get a single response for a specific user, link, and card.
+     * Get a single response for a specific user, connection, and card.
      */
     async getResponse(
         user: User,
-        link: Link,
+        connection: Connection,
         card: Card
     ): Promise<UserCardResponse | null> {
         return await this.responseRepository.findOne({
             where: {
                 user: { userToken: user.userToken },
-                link: { id: link.id },
+                connection: { id: connection.id },
                 card: { id: card.id },
             },
-            relations: ['user', 'link', 'card'],
+            relations: ['user', 'connection', 'card'],
         });
     }
 
@@ -74,17 +74,17 @@ class UserCardResponseService {
      */
     async upsertResponse(
         user: User,
-        link: Link,
+        connection: Connection,
         card: Card,
         response: 'yes' | 'no'
     ): Promise<UserCardResponse> {
-        let existing = await this.getResponse(user, link, card);
+        let existing = await this.getResponse(user, connection, card);
         if (existing) {
             existing.response = response;
             return await this.responseRepository.save(existing);
         }
 
-        const newResponse = this.responseRepository.create({ user, link, card, response });
+        const newResponse = this.responseRepository.create({ user, connection, card, response });
         return await this.responseRepository.save(newResponse);
     }
 }

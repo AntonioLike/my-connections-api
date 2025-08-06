@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors'; // Import the CORS middleware
 import userRoutes from './routes/userRoutes';
 import dotenv from 'dotenv';
-import linkRoutes from './routes/linkRoutes';
+import connectionRoutes from './routes/connectionRoutes';
 import cardRoutes from './routes/cardRoutes';
 import authRoutes from './routes/authRoutes';
 import path from 'path';
@@ -30,7 +30,7 @@ app.use('/cards', express.static(path.join(__dirname, '..', 'resources/cards')))
 
 // Routes
 app.use('/user', userRoutes);
-app.use('/link', linkRoutes);
+app.use('/connection', connectionRoutes);
 app.use('/card', cardRoutes);
 app.use('/user-card-response', userCardResponseRoutes);
 app.use('/auth', authRoutes);
