@@ -5,7 +5,7 @@ import connectionController from '../controllers/connectionController';
 const connectionRoutes = Router();
 
 // Request a connection with another user
-connectionRoutes.post('/:userToken/:targetToken', authenticateToken, connectionController.requestConnection);
+connectionRoutes.post('/link', authenticateToken, connectionController.requestConnection)
 
 connectionRoutes.get('/', authenticateToken, connectionController.getUserConnections);
 
