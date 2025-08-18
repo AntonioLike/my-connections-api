@@ -10,8 +10,10 @@ class CardController {
                 return res.status(404).json({ message: 'Card not found' });
             }
             res.json(card);
-        } catch (error) {
-            res.status(500).send('Server error');
+        } catch (error: any) {
+            console.error('Error getting card by Id:', error);
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 
@@ -20,8 +22,10 @@ class CardController {
         try {
             const cards = await cardService.getAllCards();
             res.json(cards);
-        } catch (error) {
-            res.status(500).send('Server error');
+        } catch (error: any) {
+            console.error('Error getting all cards:', error);
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 
@@ -30,8 +34,10 @@ class CardController {
         try {
             const newCard = await cardService.createCard(req.body);
             res.status(201).json(newCard);
-        } catch (error) {
-            res.status(500).send('Server error');
+        } catch (error: any) {
+            console.error('Error creating a card:', error);
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 
@@ -43,8 +49,10 @@ class CardController {
                 return res.status(404).json({ message: 'Card not found' });
             }
             res.json(updatedCard);
-        } catch (error) {
-            res.status(500).send('Server error');
+        } catch (error: any) {
+            console.error('Error updating a card:', error);
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 
@@ -56,8 +64,10 @@ class CardController {
                 return res.status(404).json({ message: 'Card not found' });
             }
             res.status(204).send(); // No content
-        } catch (error) {
-            res.status(500).send('Server error');
+        } catch (error: any) {
+            console.error('Error deleting a card:', error);
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 }

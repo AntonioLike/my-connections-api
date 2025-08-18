@@ -9,8 +9,10 @@ class AuthController {
     try {
       const user = await authService.register(req.body);
       res.status(201).json(user);
-    } catch (error) {
-      res.status(500).send('error');
+    } catch (error: any) {
+      console.error('Error registering:', error);
+      const status = error.status || 500;
+      res.status(status).json({ message: error.message || 'Server error' });
     }
   }
 
@@ -28,8 +30,10 @@ class AuthController {
       );
 
       res.status(200).json({ user: { name: user.name, email: user.email, userToken: user.userToken }, token });
-    } catch (error) {
-      res.status(500).send(error);
+    } catch (error: any) {
+      console.error('Error logging in:', error);
+      const status = error.status || 500;
+      res.status(status).json({ message: error.message || 'Server error' });
     }
   }
 
@@ -37,8 +41,10 @@ class AuthController {
     try {
       await authService.forgotPassword(req.body.email);
       res.status(200).json({ message: 'Password reset email sent if account exists' });
-    } catch {
-      res.status(500).send('Server error');
+    } catch (error: any) {
+      console.error('Error resetting password:', error);
+      const status = error.status || 500;
+      res.status(status).json({ message: error.message || 'Server error' });
     }
   }
 }

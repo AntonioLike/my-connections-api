@@ -25,6 +25,15 @@ app.use(cors(corsOptions));
 // Middleware
 app.use(express.json());
 
+// Errors
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (err.status) {
+        res.status(err.status).json({ error: err.message });
+    } else {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 // Static
 app.use('/cards', express.static(path.join(__dirname, '..', 'resources/cards')));
 

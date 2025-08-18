@@ -7,8 +7,10 @@ class UserController {
       const user = await userService.getUserByUserToken(req.params.userToken);
       if (!user) return res.status(404).json({ message: 'User not found' });
       res.json(user);
-    } catch (error) {
-      res.status(500).send('Server error');
+    } catch (error: any) {
+      console.error(`Error getting user by id ${req.params.userToken}:`, error);
+      const status = error.status || 500;
+      res.status(status).json({ message: error.message || 'Server error' });
     }
   }
 
@@ -16,8 +18,10 @@ class UserController {
     try {
       const users = await userService.getAllUsers();
       res.json(users);
-    } catch (error) {
-      res.status(500).send('Server error');
+    } catch (error: any) {
+      console.error('Error getting all users:', error);
+      const status = error.status || 500;
+      res.status(status).json({ message: error.message || 'Server error' });
     }
   }
 
@@ -26,8 +30,10 @@ class UserController {
       const updatedUser = await userService.updateUser(req.params.userToken, req.body);
       if (!updatedUser) return res.status(404).json({ message: 'User not found' });
       res.json(updatedUser);
-    } catch (error) {
-      res.status(500).send('Server error');
+    } catch (error: any) {
+      console.error(`Error updating user ${req.params.userToken}:`, error);
+      const status = error.status || 500;
+      res.status(status).json({ message: error.message || 'Server error' });
     }
   }
 
@@ -36,8 +42,10 @@ class UserController {
       const success = await userService.deleteUser(Number(req.params.id));
       if (!success) return res.status(404).json({ message: 'User not found' });
       res.status(204).send();
-    } catch (error) {
-      res.status(500).send('Server error');
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
+      const status = error.status || 500;
+      res.status(status).json({ message: error.message || 'Server error' });
     }
   }
 }

@@ -3,6 +3,7 @@ import dataSource from '../data-source';
 import { Connection } from '../entity/connection';
 import { User } from '../entity/user';
 import UserService from './userService';
+import { BadRequestError } from '../errors/badRequestError';
 
 class ConnectionService {
     private connectionRepository: Repository<Connection>;
@@ -20,14 +21,14 @@ class ConnectionService {
 
     async requestConnection(userToken: string, targetToken: string): Promise<string> {
         if (userToken === targetToken) {
-            throw new Error("You cannot connect with yourself.");
+            throw new BadRequestError("You cannot connect with yourself.");
         }
 
         const userA = await UserService.getUserByUserToken(userToken);
         const userB = await UserService.getUserByUserToken(targetToken);
 
         if (!userA || !userB) {
-            throw new Error("One or both users not found.");
+            throw new BadRequestError("One or both users not found.");
         }
 
         const [user1, user2] = this.getCanonicalUsers(userA, userB);

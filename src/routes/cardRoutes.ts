@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import cardController from '../controllers/cardController';
 import authenticateToken from '../middleware/authentication';
+import { asyncHandler } from '../utils/asyncHandler';
 
 const cardRoutes = Router();
 
-cardRoutes.get('/', authenticateToken, cardController.getAllCards);
-cardRoutes.get('/:id', authenticateToken, cardController.getCardById);
+cardRoutes.get('/', authenticateToken, asyncHandler(cardController.getAllCards));
+cardRoutes.get('/:id', authenticateToken, asyncHandler(cardController.getCardById));
 
 // Optional admin/dev routes:
 cardRoutes.post('/', authenticateToken, cardController.createCard);

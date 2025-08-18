@@ -14,9 +14,10 @@ class ConnectionController {
             }
             const result = await connectionService.requestConnection(userToken, targetToken);
             res.json({ message: result });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error requesting connection:', error);
-            res.status(500).send('Server error');
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 
@@ -33,9 +34,10 @@ class ConnectionController {
 
             const confirmedConnections = await connectionService.getConnectionsByUser(userToken);
             res.json({ connections: confirmedConnections });
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error fetching confirmed connections:", error);
-            res.status(500).send("Server error");
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || "Server error" });
         }
     }
 
@@ -49,9 +51,10 @@ class ConnectionController {
 
             const message = await connectionService.deleteLink(userToken, targetToken);
             res.json({ message });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error deleting connection:', error);
-            res.status(500).json({ error: error });
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 }

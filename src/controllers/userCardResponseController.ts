@@ -22,9 +22,10 @@ class UserCardResponseController {
 
             const result = await userCardResponseService.getAllCardsWithUserAndLinkResponses(user, connection);
             res.json(result);
-        } catch (error) {
-            console.error(error);
-            res.status(500).send('Server error');
+        } catch (error: any) {
+            console.error('Error getting all cards, links and responses for the user:', error);
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 
@@ -47,8 +48,10 @@ class UserCardResponseController {
 
             const saved = await userCardResponseService.upsertResponse(user, connection, card, response);
             res.status(200).json(saved);
-        } catch (error) {
-            res.status(500).send('Server error');
+        } catch (error: any) {
+            console.error('Error upserting the response:', error);
+            const status = error.status || 500;
+            res.status(status).json({ message: error.message || 'Server error' });
         }
     }
 }
