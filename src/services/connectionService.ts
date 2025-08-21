@@ -4,6 +4,7 @@ import { Connection } from '../entity/connection';
 import { User } from '../entity/user';
 import UserService from './userService';
 import { BadRequestError } from '../errors/badRequestError';
+import { ConflictError } from '../errors/conflictError';
 
 class ConnectionService {
     private connectionRepository: Repository<Connection>;
@@ -19,7 +20,7 @@ class ConnectionService {
         return userA.userToken < userB.userToken ? [userA, userB] : [userB, userA];
     }
 
-    async requestConnection(userToken: string, targetToken: string): Promise<string> {
+    async requestConnection(userToken: string, targetToken: string): Promise<any> {
         if (userToken === targetToken) {
             throw new BadRequestError("You cannot connect with yourself.");
         }
@@ -41,13 +42,13 @@ class ConnectionService {
         if (connection) {
             if (connection.status === "pending") {
                 if (userToken === connection.user1.userToken) {
-                    return "Waiting for the other user to request the connection.";
+                    return { status: 202, message: "Waiting for the other user to request the connection." };
                 }
                 connection.status = "connected";
                 await this.connectionRepository.save(connection);
-                return "Link confirmed.";
+                return { status: 200, message: "Link confirmed." };
             }
-            return "Link already exists.";
+            throw new ConflictError("Connection already exists.");
         }
 
         // Create a new connection request initiated by userToken
