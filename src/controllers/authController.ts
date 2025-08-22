@@ -24,9 +24,14 @@ class AuthController {
       if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
       const token = jwt.sign(
-        { userToken: user.userToken, email: user.email },
+        { email: user.email },
         SECRET_KEY,
-        { expiresIn: '1h' }
+        {
+          subject: user.userToken,
+          issuer: "myconnections-api",
+          audience: "myconnections-app",
+          expiresIn: '1h'
+        }
       );
 
       res.status(200).json({ user: { name: user.name, email: user.email, userToken: user.userToken }, token });

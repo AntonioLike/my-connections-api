@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import connectionService from '../services/connectionService';
-import { AuthenticatedRequest } from "../middleware/authentication"
 
 class ConnectionController {
 
@@ -22,7 +21,7 @@ class ConnectionController {
     }
 
     // Get all confirmed connections for the logged-in user
-    async getUserConnections(req: AuthenticatedRequest, res: Response) {
+    async getUserConnections(req: Request, res: Response) {
         try {
             const userPayload = req.user;
 
