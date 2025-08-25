@@ -6,7 +6,7 @@ class ConnectionController {
     // Request a connection with another user
     async requestConnection(req: Request, res: Response) {
         try {
-            const userToken = req.query.userToken as string;
+            const userToken = req.user?.userToken;
             const targetToken = req.query.targetToken as string;
             if (!userToken || !targetToken) {
                 return res.status(400).json({ message: 'Both userToken and targetToken are required' });
