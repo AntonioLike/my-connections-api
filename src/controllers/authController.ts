@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import authService from '../services/authService';
+import { JWT_AUDIENCE, JWT_EXPIRES, JWT_ISSUER } from '../config/auth';
 
 const SECRET_KEY = process.env.SECRET_KEY || 'default-secret';
 
@@ -26,13 +27,8 @@ class AuthController {
       const token = jwt.sign(
         { email: user.email },
         SECRET_KEY,
-        {
-          subject: user.userToken,
-          issuer: "myconnections-api",
-          audience: "myconnections-app",
-          expiresIn: '1h'
-        }
-      );
+        { subject: user.userToken, issuer: JWT_ISSUER, audience: JWT_AUDIENCE, expiresIn: JWT_EXPIRES }
+      )
 
       res.status(200).json({ user: { name: user.name, email: user.email, userToken: user.userToken }, token });
     } catch (error: any) {

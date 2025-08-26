@@ -1,14 +1,12 @@
 import express, { Application } from 'express';
 import cors from 'cors'; // Import the CORS middleware
 import userRoutes from './routes/userRoutes';
-import dotenv from 'dotenv';
+import "dotenv/config";
 import connectionRoutes from './routes/connectionRoutes';
 import cardRoutes from './routes/cardRoutes';
 import authRoutes from './routes/authRoutes';
 import path from 'path';
 import userCardResponseRoutes from './routes/userCardResponseRoutes';
-
-dotenv.config();
 
 const app: Application = express();
 

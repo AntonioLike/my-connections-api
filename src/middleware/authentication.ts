@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from "express"
 import jwt, { JwtPayload } from "jsonwebtoken"
 import userService from "../services/userService"
+import { JWT_AUDIENCE, JWT_ISSUER } from "../config/auth"
 
 declare module "express-serve-static-core" {
     interface Request {
@@ -24,8 +25,9 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
 
     try {
         const payload = jwt.verify(token, SECRET_KEY, {
-            issuer: "myconnections-api",
-            audience: "myconnections-app",
+            issuer: JWT_ISSUER,
+            audience: JWT_AUDIENCE,
+            algorithms: ["HS256"],
         }) as JwtPayload
 
         const userId = (payload.sub as string) || (payload as any).userToken
@@ -39,8 +41,9 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
         req.user = user
 
         next()
-    } catch {
-        return res.status(403).json({ message: "Invalid token" })
+    } catch (err: any) {
+        console.error("JWT verification failed:", err.message)
+        return res.status(401).json({ message: "Invalid or expired token" })
     }
 }
 
