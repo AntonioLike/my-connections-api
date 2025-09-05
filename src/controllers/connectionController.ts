@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import connectionService from '../services/connectionService';
+import { toUserConnectionDTOs } from '../mapper/connection.mapper';
 
 class ConnectionController {
 
@@ -32,7 +33,9 @@ class ConnectionController {
             const userToken = userPayload.userToken;
 
             const confirmedConnections = await connectionService.getConnectionsByUser(userToken);
-            res.json({ connections: confirmedConnections });
+
+            const confirmedConnectionsDTOs = toUserConnectionDTOs(confirmedConnections, userPayload);
+            res.json(confirmedConnectionsDTOs);
         } catch (error: any) {
             console.error("Error fetching confirmed connections:", error);
             const status = error.status || 500;
