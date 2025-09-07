@@ -13,6 +13,7 @@ class ConnectionController {
                 return res.status(400).json({ message: 'Both userToken and targetToken are required' });
             }
             const result = await connectionService.requestConnection(userToken, targetToken);
+            res.status(result.status || 200);
             res.json(result);
         } catch (error: any) {
             console.error('Error requesting connection:', error);
